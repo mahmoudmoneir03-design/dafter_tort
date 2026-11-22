@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'models.dart';
+import 'notifications.dart';
 import 'util.dart';
 
 final Store store = Store();
@@ -112,11 +113,13 @@ class Store extends ChangeNotifier {
       orders.add(o);
     }
     _save();
+    syncOrderNotifications(o);
   }
 
   void deleteOrder(String id) {
     orders.removeWhere((x) => x.id == id);
     _save();
+    cancelOrderNotifications(id);
   }
 
   void putCustomer(Customer c) {

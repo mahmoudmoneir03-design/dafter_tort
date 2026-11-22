@@ -6,11 +6,14 @@ import 'screens/home.dart';
 import 'screens/ingredients.dart';
 import 'screens/orders.dart';
 import 'screens/reports.dart';
+import 'notifications.dart';
 import 'store.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await store.load();
+  await initNotifications();
+  await resyncAllNotifications(store.orders);
   runApp(const DafterApp());
 }
 

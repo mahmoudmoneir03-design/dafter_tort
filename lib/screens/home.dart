@@ -4,6 +4,7 @@ import '../models.dart';
 import '../store.dart';
 import '../util.dart';
 import '../widgets.dart';
+import '../notifications.dart';
 import 'expenses.dart';
 import 'orders.dart';
 
@@ -23,6 +24,17 @@ class HomePage extends StatelessWidget {
           ],
         ),
         actions: [
+          IconButton(
+            tooltip: 'جرّب الإشعارات',
+            icon: const Icon(Icons.notifications_active_outlined),
+            onPressed: () async {
+              await testNotification();
+              if (context.mounted) {
+                snack(context,
+                    'لو الإشعار مجاش، فعّل الإشعارات للتطبيق من إعدادات الموبايل');
+              }
+            },
+          ),
           IconButton(
             tooltip: 'المصروفات',
             icon: const Icon(Icons.account_balance_wallet_outlined),
