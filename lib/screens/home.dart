@@ -18,7 +18,7 @@ class HomePage extends StatelessWidget {
           children: [
             Icon(Icons.cake, color: Theme.of(context).colorScheme.primary),
             const SizedBox(width: 8),
-            const Text('دفتر التورت',
+            const Text('Yoyo Cake',
                 style: TextStyle(fontWeight: FontWeight.w800)),
           ],
         ),

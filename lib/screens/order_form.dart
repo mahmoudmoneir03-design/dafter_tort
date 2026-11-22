@@ -78,6 +78,24 @@ class _OrderFormPageState extends State<OrderFormPage> {
     });
   }
 
+  Future<void> _pickContact() async {
+    final r = await pickPhoneContact(context);
+    if (r == null) return;
+    setState(() {
+      if (r[0].isNotEmpty) name.text = r[0];
+      phone.text = r[1];
+      final key = digitsOf(r[1]);
+      if (key.isNotEmpty) {
+        for (final c in store.customers) {
+          if (digitsOf(c.phone) == key) {
+            if (addr.text.isEmpty) addr.text = c.address;
+            break;
+          }
+        }
+      }
+    });
+  }
+
   Future<void> _pickDate() async {
     final d = await showDatePicker(
       context: context,
@@ -180,15 +198,23 @@ class _OrderFormPageState extends State<OrderFormPage> {
         children: [
           FormCard('بيانات العميل', [
             textField('اسم العميل', name),
-            if (store.customers.isNotEmpty)
-              Align(
-                alignment: AlignmentDirectional.centerStart,
-                child: OutlinedButton.icon(
-                  onPressed: _pickCustomer,
-                  icon: const Icon(Icons.person_search),
-                  label: const Text('اختار عميل سابق'),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: _pickContact,
+                  icon: const Icon(Icons.contacts_outlined),
+                  label: const Text('من جهات الاتصال'),
                 ),
-              ),
+                if (store.customers.isNotEmpty)
+                  OutlinedButton.icon(
+                    onPressed: _pickCustomer,
+                    icon: const Icon(Icons.person_search),
+                    label: const Text('عميل سابق'),
+                  ),
+              ],
+            ),
             textField('رقم الموبايل', phone, type: TextInputType.phone),
             textField('العنوان (لو توصيل)', addr),
           ]),

@@ -27,7 +27,7 @@ class DafterApp extends StatelessWidget {
               const InputDecorationTheme(border: OutlineInputBorder()),
         );
     return MaterialApp(
-      title: 'دفتر التورت',
+      title: 'Yoyo Cake',
       debugShowCheckedModeBanner: false,
       locale: const Locale('ar', 'EG'),
       supportedLocales: const [Locale('ar', 'EG')],

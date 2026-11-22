@@ -248,6 +248,15 @@ class _CustomerFormPageState extends State<CustomerFormPage> {
     Navigator.pop(context);
   }
 
+  Future<void> _pickContact() async {
+    final r = await pickPhoneContact(context);
+    if (r == null) return;
+    setState(() {
+      if (r[0].isNotEmpty) name.text = r[0];
+      phone.text = r[1];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final c = widget.customer;
@@ -256,6 +265,15 @@ class _CustomerFormPageState extends State<CustomerFormPage> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: OutlinedButton.icon(
+              onPressed: _pickContact,
+              icon: const Icon(Icons.contacts_outlined),
+              label: const Text('استيراد من جهات الاتصال'),
+            ),
+          ),
+          const SizedBox(height: 12),
           textField('الاسم', name),
           const SizedBox(height: 12),
           textField('رقم الموبايل', phone, type: TextInputType.phone),

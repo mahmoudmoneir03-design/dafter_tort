@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 
 import 'models.dart';
 import 'store.dart';
@@ -504,5 +505,28 @@ void addLine(List<Line> lines, Ingredient ing, double qty) {
       qty: qty,
       unitCost: ing.unitCost,
     ));
+  }
+}
+
+/// بيفتح جهات الاتصال في الموبايل ويرجّع [الاسم، الرقم]. مش محتاج صلاحية.
+Future<List<String>?> pickPhoneContact(BuildContext context) async {
+  try {
+    final c = await FlutterNativeContactPicker().selectPhoneNumber();
+    if (c == null) return null;
+    final name = (c.fullName ?? '').trim();
+    final raw = c.selectedPhoneNumber ??
+        ((c.phoneNumbers != null && c.phoneNumbers!.isNotEmpty)
+            ? c.phoneNumbers!.first
+            : '');
+    var phone = raw.replaceAll(RegExp(r'[\s\-\(\)]'), '');
+    if (phone.startsWith('+20')) {
+      phone = '0${phone.substring(3)}';
+    } else if (phone.startsWith('0020')) {
+      phone = '0${phone.substring(4)}';
+    }
+    return [name, phone];
+  } catch (_) {
+    if (context.mounted) snack(context, 'مقدرتش أفتح جهات الاتصال');
+    return null;
   }
 }
