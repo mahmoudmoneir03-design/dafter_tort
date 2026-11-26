@@ -1,0 +1,49 @@
+name: Build APK
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, master]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check app files are uploaded
+        run: |
+          for f in pubspec.yaml lib/main.dart lib/core.dart lib/data.dart lib/games/jigsaw.dart lib/games/coloring.dart lib/games/tracing.dart lib/games/reading.dart lib/games/assemble.dart lib/games/memory.dart lib/games/pattern.dart assets/icon/icon.png assets/icon/icon_fg.png assets/sounds/ok.wav; do
+            if [ ! -f "$f" ]; then echo "MISSING FILE: $f - upload the whole lib and assets folders"; exit 1; fi
+          done
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          flutter-version: 3.35.x
+          cache: true
+
+      - name: Generate Android project files
+        run: |
+          flutter create --platforms=android --org com.zaki --project-name kids_brain .
+          rm -rf test
+          sed -i 's/android:label="kids_brain"/android:label="ذكي"/' android/app/src/main/AndroidManifest.xml
+
+      - name: Get packages
+        run: flutter pub get
+
+      - name: Create app icon
+        run: dart run flutter_launcher_icons
+
+      - name: Build release APK
+        run: flutter build apk --release
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: zaki-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
